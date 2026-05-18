@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kiểm tra tiền hoàn dự kiến</title>
+    <title>Kiểm tra hoa hồng Shopee Xtra</title>
 
     <style>
 
@@ -93,10 +93,10 @@
 
 <div class="container">
 
-    <h1>Kiểm Tra Tiền Hoàn Dự Kiến</h1>
+    <h1>Kiểm Tra Hoa Hồng Xtra</h1>
 
     <p>
-        Dán link sản phẩm Shopee để xem tiền hoàn dự kiến
+        Dán link sản phẩm Shopee để xem 50% hoa hồng Xtra
     </p>
 
     <input
@@ -106,7 +106,7 @@
     >
 
     <button onclick="checkCommission()">
-        Kiểm Tra Tiền Hoàn
+        Kiểm Tra Hoa Hồng
     </button>
 
     <div class="result" id="resultBox">
@@ -117,14 +117,14 @@
             Giá sản phẩm:
             <span id="productPrice"></span>
         </div>
-        <div style="display:none;">
-    Hoa hồng Xtra:
-    <span id="commissionFull"></span>
-</div>
-
 
         <div>
-            Tiền hoàn có thể nhận được:
+            Hoa hồng Xtra:
+            <span id="commissionFull"></span>
+        </div>
+
+        <div>
+            50% hoa hồng nhận được:
             <span
                 class="money"
                 id="commissionHalf"
@@ -216,7 +216,7 @@ async function checkCommission() {
     } catch (error) {
 
         productName.innerHTML =
-            "Không lấy được dữ liệu.";
+            "Không lấy được dữ liệu hoa hồng.";
 
         console.log(error);
     }
