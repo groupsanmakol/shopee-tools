@@ -213,16 +213,18 @@ async function checkCommission() {
             Number(info.commission || 0);
 
         // % hoa hồng Xtra
-        const commissionRate =
-            Number(info.commissionRate || 0);
+const commissionRate =
+    price > 0
+    ? (commission / price) * 100
+    : 0;
 
         // 50% tiền hoa hồng
         const halfCommission =
             Math.round(commission * 0.5);
 
-        // 50% tỷ lệ hoa hồng
-        const cashbackPercent =
-            (commissionRate * 0.5).toFixed(1);
+        // 50% tỷ lệ hoàn tiền
+const cashbackPercent =
+    (commissionRate * 0.5).toFixed(1);
 
         productName.innerHTML = name;
 
