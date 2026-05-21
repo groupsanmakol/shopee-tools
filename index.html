@@ -33,7 +33,7 @@
 
         .container {
 
-            max-width: 1100px;
+            max-width: 1000px;
 
             margin: 0 auto;
 
@@ -49,7 +49,7 @@
 
         h1 {
 
-            margin: 0;
+            margin: 0 0 30px;
 
             text-align: center;
 
@@ -58,20 +58,11 @@
             color: #111;
         }
 
-        .top-box {
-
-            display: flex;
-
-            gap: 30px;
-
-            margin-top: 35px;
-
-            flex-wrap: wrap;
-        }
-
         .input-box {
 
-            width: 300px;
+            max-width: 350px;
+
+            margin: 0 auto;
         }
 
         textarea {
@@ -128,29 +119,19 @@
             background: #256428;
         }
 
-        .note {
+        .message {
 
-            flex: 1;
+            margin-top: 30px;
 
-            min-width: 260px;
+            text-align: center;
 
-            line-height: 1.9;
-
-            font-size: 15px;
-        }
-
-        .note-title {
+            font-size: 18px;
 
             font-weight: bold;
 
-            margin-bottom: 10px;
-        }
+            color: #d84315;
 
-        .red {
-
-            color: red;
-
-            font-weight: bold;
+            display: none;
         }
 
         .table-wrap {
@@ -158,6 +139,8 @@
             margin-top: 40px;
 
             overflow-x: auto;
+
+            display: none;
         }
 
         table {
@@ -211,9 +194,9 @@
             background: #e8f5e9;
         }
 
-        .not-found {
+        .money {
 
-            color: red;
+            color: #d84315;
 
             font-weight: bold;
         }
@@ -227,23 +210,11 @@
             color: #666;
         }
 
-        .money {
-
-            color: #d84315;
-
-            font-weight: bold;
-        }
-
         @media (max-width: 768px) {
 
-            .top-box {
+            h1 {
 
-                flex-direction: column;
-            }
-
-            .input-box {
-
-                width: 100%;
+                font-size: 28px;
             }
         }
 
@@ -258,27 +229,31 @@
         TRA CỨU ĐƠN HÀNG HOÀN TIỀN
     </h1>
 
-    <div class="top-box">
+    <div class="input-box">
 
-        <div class="input-box">
+        <textarea
+            id="orderInput"
+            placeholder="Nhập ID đơn hàng&#10;Mỗi dòng 1 ID"
+        ></textarea>
 
-            <textarea
-                id="orderInput"
-                placeholder="Nhập ID đơn hàng&#10;Mỗi dòng 1 ID"
-            ></textarea>
-
-            <button
-                class="search-btn"
-                onclick="searchOrders()"
-            >
-                TRA CỨU ĐƠN HÀNG
-            </button>
-
-        </div>
+        <button
+            class="search-btn"
+            onclick="searchOrders()"
+        >
+            TRA CỨU ĐƠN HÀNG
+        </button>
 
     </div>
 
-    <div class="table-wrap">
+    <div
+        class="message"
+        id="messageBox"
+    ></div>
+
+    <div
+        class="table-wrap"
+        id="tableWrap"
+    >
 
         <table>
 
@@ -327,16 +302,6 @@
 
             <tbody id="resultBody">
 
-                <tr>
-
-                    <td colspan="6">
-
-                        Chưa có dữ liệu
-
-                    </td>
-
-                </tr>
-
             </tbody>
 
         </table>
@@ -349,24 +314,24 @@
 
 /*
 
-====================================
+==============================
 
-THAY LINK API CỦA BẠN Ở ĐÂY
+THAY API CỦA BẠN
 
-====================================
+==============================
 
 */
 
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbxckbuKqcA56Hcpw_IOx_JwTY8A78ln0quGgCUFmkqnY2_rBhgN6hRD390ClhG1fqgstg/exec";
+    "YOUR_APPS_SCRIPT_API_URL";
 
 /*
 
-====================================
+==============================
 
 TRA CỨU ĐƠN HÀNG
 
-====================================
+==============================
 
 */
 
@@ -382,6 +347,14 @@ async function searchOrders() {
         document
             .getElementById("resultBody");
 
+    const tableWrap =
+        document
+            .getElementById("tableWrap");
+
+    const messageBox =
+        document
+            .getElementById("messageBox");
+
     if (!input) {
 
         alert(
@@ -391,29 +364,22 @@ async function searchOrders() {
         return;
     }
 
+    tableWrap.style.display = "none";
+
+    messageBox.style.display = "block";
+
+    messageBox.innerHTML =
+        "Đang tra cứu dữ liệu...";
+
     const orderIds =
         input
             .split("\n")
             .map(id => id.trim())
             .filter(id => id);
 
-    resultBody.innerHTML =
-        `
-        <tr>
-
-            <td
-                colspan="6"
-                class="loading"
-            >
-
-                Đang tra cứu dữ liệu...
-
-            </td>
-
-        </tr>
-        `;
-
     let html = "";
+
+    let found = false;
 
     for (const orderId of orderIds) {
 
@@ -433,29 +399,10 @@ async function searchOrders() {
 
             if (!data) {
 
-                html += `
-                    <tr>
-
-                        <td>
-
-                            ${orderId}
-
-                        </td>
-
-                        <td
-                            colspan="5"
-                            class="not-found"
-                        >
-
-                            Không tìm thấy đơn hàng
-
-                        </td>
-
-                    </tr>
-                `;
-
                 continue;
             }
+
+            found = true;
 
             html += `
                 <tr class="success">
@@ -513,30 +460,31 @@ async function searchOrders() {
 
         } catch (error) {
 
-            html += `
-                <tr>
-
-                    <td>
-
-                        ${orderId}
-
-                    </td>
-
-                    <td
-                        colspan="5"
-                        class="not-found"
-                    >
-
-                        Lỗi tra cứu dữ liệu
-
-                    </td>
-
-                </tr>
-            `;
+            console.log(error);
         }
     }
 
+    if (!found) {
+
+        tableWrap.style.display =
+            "none";
+
+        messageBox.style.display =
+            "block";
+
+        messageBox.innerHTML =
+            "Không có dữ liệu đơn hàng";
+
+        return;
+    }
+
     resultBody.innerHTML = html;
+
+    messageBox.style.display =
+        "none";
+
+    tableWrap.style.display =
+        "block";
 }
 
 </script>
