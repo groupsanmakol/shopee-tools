@@ -465,6 +465,8 @@ async function searchOrder() {
 
         let total = 0;
 
+        let validProductCount = 0;
+
         items.forEach(item => {
 
             const cashback =
@@ -472,10 +474,14 @@ async function searchOrder() {
                     item.cashback || 0
                 );
 
+            // Bỏ qua sản phẩm không có hoàn tiền
+
             if (cashback <= 0) {
 
                 return;
             }
+
+            validProductCount++;
 
             total += cashback;
 
@@ -558,19 +564,21 @@ async function searchOrder() {
             `;
         });
 
-        if (!html) {
+        // Có đơn nhưng không có cashback
 
-    resultBox.style.display =
-        "none";
+        if (validProductCount === 0) {
 
-    totalCashbackBox.style.display =
-        "none";
+            resultBox.style.display =
+                "none";
 
-    messageBox.innerHTML =
-        "Sản phẩm này không có hoàn tiền";
+            totalCashbackBox.style.display =
+                "none";
 
-    return;
-}
+            messageBox.innerHTML =
+                "Sản phẩm này không có hoàn tiền";
+
+            return;
+        }
 
         totalCashback.innerHTML =
             formatMoney(total);
