@@ -48,13 +48,24 @@
 
         h1 {
 
-            margin: 0 0 30px;
+            margin: 0 0 20px;
 
             text-align: center;
 
             font-size: 30px;
 
             color: #111;
+        }
+
+        #updateDate {
+
+            text-align: center;
+
+            color: #666;
+
+            font-size: 14px;
+
+            margin-bottom: 25px;
         }
 
         .input-box {
@@ -123,6 +134,41 @@
             color: #d84315;
 
             display: none;
+        }
+
+        .total-box {
+
+            display: none;
+
+            margin-top: 25px;
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            background: #fff3e0;
+
+            border: 1px solid #ffcc80;
+
+            text-align: center;
+        }
+
+        .total-label {
+
+            font-size: 14px;
+
+            color: #666;
+
+            margin-bottom: 8px;
+        }
+
+        .total-value {
+
+            font-size: 32px;
+
+            font-weight: bold;
+
+            color: #d84315;
         }
 
         .result-box {
@@ -201,6 +247,11 @@
 
                 font-size: 17px;
             }
+
+            .total-value {
+
+                font-size: 28px;
+            }
         }
 
     </style>
@@ -213,17 +264,11 @@
     <h1>
         TRA CỨU ĐƠN HÀNG HOÀN TIỀN
     </h1>
-<div
-    id="updateDate"
-    style="
-        text-align:center;
-        color:#666;
-        font-size:14px;
-        margin-bottom:25px;
-    "
->
-    Dữ liệu cập nhật gần nhất: --
-</div>
+
+    <div id="updateDate">
+        Dữ liệu cập nhật gần nhất: --
+    </div>
+
     <div class="input-box">
 
         <input
@@ -246,6 +291,24 @@
         class="message"
         id="messageBox"
     ></div>
+
+    <div
+        class="total-box"
+        id="totalCashbackBox"
+    >
+
+        <div class="total-label">
+            Tổng tiền hoàn dự kiến
+        </div>
+
+        <div
+            class="total-value"
+            id="totalCashback"
+        >
+            0đ
+        </div>
+
+    </div>
 
     <div
         class="result-box"
@@ -277,8 +340,11 @@ function formatMoney(value) {
 function formatRate(value) {
 
     return (
-    Number(value || 0) * 100
-).toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1") + "%";
+        Number(value || 0) * 100
+    )
+    .toFixed(2)
+    .replace(/\.00$/, "")
+    .replace(/(\.\d)0$/, "$1") + "%";
 }
 
 function formatTime(value) {
@@ -309,6 +375,14 @@ async function searchOrder() {
         document
             .getElementById("messageBox");
 
+    const totalCashbackBox =
+        document
+            .getElementById("totalCashbackBox");
+
+    const totalCashback =
+        document
+            .getElementById("totalCashback");
+
     if (!orderId) {
 
         alert(
@@ -322,6 +396,9 @@ async function searchOrder() {
         "none";
 
     resultBox.innerHTML = "";
+
+    totalCashbackBox.style.display =
+        "none";
 
     messageBox.style.display =
         "block";
@@ -346,20 +423,18 @@ async function searchOrder() {
         }
 
         const responseData =
-    await response.json();
+            await response.json();
 
-const data =
-    responseData.data || [];
+        const data =
+            responseData.data || [];
 
-document.getElementById(
-    "updateDate"
-).innerHTML =
-    "Dữ liệu cập nhật gần nhất: " +
-    (
-        responseData.updateDate || "--"
-    );
-
-        console.log(data);
+        document.getElementById(
+            "updateDate"
+        ).innerHTML =
+            "Dữ liệu cập nhật gần nhất: " +
+            (
+                responseData.updateDate || "--"
+            );
 
         if (
             !data ||
@@ -370,6 +445,9 @@ document.getElementById(
         ) {
 
             resultBox.style.display =
+                "none";
+
+            totalCashbackBox.style.display =
                 "none";
 
             messageBox.innerHTML =
@@ -385,6 +463,8 @@ document.getElementById(
 
         let html = "";
 
+        let total = 0;
+
         items.forEach(item => {
 
             const cashback =
@@ -392,12 +472,12 @@ document.getElementById(
                     item.cashback || 0
                 );
 
-            // Ẩn sản phẩm hoàn tiền = 0
-
             if (cashback <= 0) {
 
                 return;
             }
+
+            total += cashback;
 
             html += `
 
@@ -483,11 +563,20 @@ document.getElementById(
             resultBox.style.display =
                 "none";
 
+            totalCashbackBox.style.display =
+                "none";
+
             messageBox.innerHTML =
                 "Không có sản phẩm được hoàn tiền";
 
             return;
         }
+
+        totalCashback.innerHTML =
+            formatMoney(total);
+
+        totalCashbackBox.style.display =
+            "block";
 
         resultBox.innerHTML =
             html;
@@ -506,6 +595,9 @@ document.getElementById(
         console.log(error);
 
         resultBox.style.display =
+            "none";
+
+        totalCashbackBox.style.display =
             "none";
 
         messageBox.style.display =
