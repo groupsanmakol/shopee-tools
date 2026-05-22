@@ -379,9 +379,9 @@ async function searchOrder() {
         document.getElementById(
             "amount"
         ).innerHTML =
-            Number(
-                item.amount || 0
-            ).toLocaleString("vi-VN") + "đ";
+            Math.floor(
+    Number(item.amount || 0)
+).toLocaleString("vi-VN") + "đ";
 
         document.getElementById(
             "rate"
@@ -395,9 +395,9 @@ async function searchOrder() {
         document.getElementById(
             "cashback"
         ).innerHTML =
-            Number(
-                item.cashback || 0
-            ).toLocaleString("vi-VN") + "đ";
+            Math.floor(
+    Number(item.cashback || 0)
+).toLocaleString("vi-VN") + "đ";
 
         document.getElementById(
             "time"
